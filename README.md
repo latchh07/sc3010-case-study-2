@@ -1,4 +1,4 @@
-# Log4Shell Lab — CVE-2021-44228 (SC3010, educational)
+# Log4Shell Lab — CVE-2021-44228 (SC3010)
 
 A fully isolated, offline, **defanged** demonstration of the *mechanism* behind
 Log4Shell (CVE-2021-44228). It reproduces the exact chain — a crafted string in
