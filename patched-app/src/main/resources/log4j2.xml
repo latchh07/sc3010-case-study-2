@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SC3010 lab Log4j configuration.
+
+  A plain console appender using %msg (NOT %m{nolookups} or any lookup-
+  disabling option), so message-text lookup substitution stays at the
+  Log4j 2.14.1 default. This is deliberate: we are reproducing the
+  pre-patch behaviour. The patched-app uses this same file; its safety
+  comes from the Log4j 2.17.1 library, not from this configuration.
+-->
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

