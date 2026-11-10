@@ -42,7 +42,7 @@ public class VulnerableApp {
         // We simply log the string. We do not parse it, evaluate it, or run it.
         // On vulnerable Log4j, lookup substitution turns ${jndi:...} in this
         // message into a JNDI lookup -> remote class load -> code execution.
-        logger.error("Processing user input: " + input);
+        logger.info("Processing user input: " + input);
 
         System.out.println("[APP] app finished (control returned to main)");
     }
